@@ -15,9 +15,11 @@ def post_page(request, slug):
 @login_required(login_url='/users/login')
 def post_new(request):
     if request.method == "POST":
-        form = PostForm(request.POST)
-        if form.is_valid():
-            post = form.save()
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid(): 
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
             return redirect('posts:page', slug=post.slug)
     else:
         form = PostForm()
